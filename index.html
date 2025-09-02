@@ -6,9 +6,22 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Нажми кнопку!</h1>
+  <h1>Кликер</h1>
   <p>Очки: <span id="score">0</span></p>
   <button id="clickBtn">Клик!</button>
+
+  <h2>Улучшения</h2>
+  <div id="upgrades">
+    <button id="doubleClick">x2 за 50 очков</button>
+    <button id="autoClick">+1/сек за 200 очков</button>
+  </div>
+
+  <h2>Лидерборд</h2>
+  <div id="leaderboard">
+    <input type="text" id="nickname" placeholder="Твой ник">
+    <button id="saveScore">Сохранить результат</button>
+    <ul id="scoresList"></ul>
+  </div>
 
   <script src="script.js"></script>
 </body>
