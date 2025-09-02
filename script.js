@@ -7,8 +7,13 @@ const scoreEl = document.getElementById("score");
 const clickBtn = document.getElementById("clickBtn");
 const doubleClickBtn = document.getElementById("doubleClick");
 const autoClickBtn = document.getElementById("autoClick");
+const secretBtn = document.getElementById("secretBtn");
 const saveScoreBtn = document.getElementById("saveScore");
 const scoresList = document.getElementById("scoresList");
+
+const secretModal = document.getElementById("secretModal");
+const secretImg = document.getElementById("secretImg");
+const closeModal = document.getElementById("closeModal");
 
 // ==== JSONBIN CONFIG ====
 const API_KEY = "$2a$10$DtvJ.cRYmWQwaxY7ZPbEl.Itwtyh2fZjipxKjO/oAQRWHhzSuGDYa";
@@ -37,6 +42,7 @@ window.onload = () => {
   loadScores();
 };
 
+// ==== Основные кнопки ====
 clickBtn.addEventListener("click", () => {
   score += multiplier;
   updateScore();
@@ -71,6 +77,32 @@ setInterval(() => {
   }
 }, 1000);
 
+// ==== Тайная кнопка ====
+const SECRET_URL = "https://i.ibb.co/JFp0CLL1/molodec.png";
+
+secretBtn.addEventListener("click", () => {
+  if (score >= 1000) {
+    score -= 1000;
+    updateScore();
+    saveGame();
+    secretImg.src = SECRET_URL;
+    secretModal.style.display = "block";
+  } else {
+    alert("Nemáte dostatek bodů!");
+  }
+});
+
+closeModal.addEventListener("click", () => {
+  secretModal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target == secretModal) {
+    secretModal.style.display = "none";
+  }
+});
+
+// ==== Локальное сохранение ====
 function saveGame() {
   const save = { score, multiplier, autoClick, doubleClickCount };
   localStorage.setItem("clickerSave", JSON.stringify(save));
@@ -118,7 +150,6 @@ saveScoreBtn.addEventListener("click", async () => {
 
     scores = scores.filter(s => s.name);
 
-    // Если уже есть запись игрока, заменяем её
     const existing = scores.find(s => s.name === playerName);
     if (existing) {
       existing.score = score;
