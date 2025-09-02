@@ -1,29 +1,27 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <title>Clicker Game</title>
+  <title>Klikací hra</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Kliker</h1>
-  <p>Очки: <span id="score">0</span></p>
-  <button id="clickBtn">Клик!</button>
+  <p>Body: <span id="score">0</span></p>
+  <button id="clickBtn">Klik!</button>
 
-  <h2>Upgrade</h2>
+  <h2>Vylepšení</h2>
   <div id="upgrades">
-    <button id="doubleClick">x2 за 50 очков</button>
-    <button id="autoClick">+1/сек за 200 очков</button>
+    <button id="doubleClick">x2 (0/3) za 50 bodů</button>
+    <button id="autoClick">+1/sek za 200 bodů</button>
   </div>
 
-  <h2>Zebrik</h2>
+  <h2>Žebříček</h2>
   <div id="leaderboard">
-    <input type="text" id="nickname" placeholder="Твой ник">
-    <button id="saveScore">Ulozit score</button>
+    <button id="saveScore">Přidat body</button>
     <ul id="scoresList"></ul>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
