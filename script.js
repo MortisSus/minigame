@@ -1,28 +1,38 @@
 let score = 0;
 let multiplier = 1;
 let autoClick = 0;
+let doubleClickCount = 0;
 
 const scoreEl = document.getElementById("score");
 const clickBtn = document.getElementById("clickBtn");
 const doubleClickBtn = document.getElementById("doubleClick");
 const autoClickBtn = document.getElementById("autoClick");
-const nicknameInput = document.getElementById("nickname");
 const saveScoreBtn = document.getElementById("saveScore");
 const scoresList = document.getElementById("scoresList");
 
 // ==== JSONBIN CONFIG ====
-const API_KEY = "$2a$10$DtvJ.cRYmWQwaxY7ZPbEl.Itwtyh2fZjipxKjO/oAQRWHhzSuGDYa"; // твой ключ
-const BIN_ID = "68b755c9d0ea881f406fbd27"; // твой Bin ID
+const API_KEY = "$2a$10$DtvJ.cRYmWQwaxY7ZPbEl.Itwtyh2fZjipxKjO/oAQRWHhzSuGDYa";
+const BIN_ID = "68b755c9d0ea881f406fbd27";
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-// ==== ЛОКАЛЬНОЕ СОХРАНЕНИЕ ====
+// ==== Získání nicku při vstupu ====
+let playerName = localStorage.getItem("playerName");
+if (!playerName) {
+  playerName = prompt("Zadejte svůj nick:");
+  if (!playerName) playerName = "Hráč";
+  localStorage.setItem("playerName", playerName);
+}
+
+// ==== LOCALE STORAGE ====
 window.onload = () => {
   const save = JSON.parse(localStorage.getItem("clickerSave"));
   if (save) {
     score = save.score;
     multiplier = save.multiplier;
     autoClick = save.autoClick;
+    doubleClickCount = save.doubleClickCount || 0;
     updateScore();
+    updateDoubleClickText();
   }
   loadScores();
 };
@@ -34,10 +44,12 @@ clickBtn.addEventListener("click", () => {
 });
 
 doubleClickBtn.addEventListener("click", () => {
-  if (score >= 50) {
+  if (score >= 50 && doubleClickCount < 3) {
     score -= 50;
     multiplier *= 2;
+    doubleClickCount++;
     updateScore();
+    updateDoubleClickText();
     saveGame();
   }
 });
@@ -60,7 +72,7 @@ setInterval(() => {
 }, 1000);
 
 function saveGame() {
-  const save = { score, multiplier, autoClick };
+  const save = { score, multiplier, autoClick, doubleClickCount };
   localStorage.setItem("clickerSave", JSON.stringify(save));
 }
 
@@ -68,8 +80,11 @@ function updateScore() {
   scoreEl.innerText = score;
 }
 
-// ==== ОНЛАЙН ЛИДЕРБОРД ====
+function updateDoubleClickText() {
+  doubleClickBtn.innerText = `x2 (${doubleClickCount}/3) za 50 bodů`;
+}
 
+// ==== Online leaderboard ====
 async function loadScores() {
   try {
     const res = await fetch(API_URL, {
@@ -80,24 +95,20 @@ async function loadScores() {
     
     scoresList.innerHTML = "";
     scores
+      .filter(s => s.name)
       .sort((a, b) => b.score - a.score)
       .slice(0, 10)
       .forEach(s => {
-        if(s.name) { // игнор пустых объектов
-          const li = document.createElement("li");
-          li.textContent = `${s.name}: ${s.score}`;
-          scoresList.appendChild(li);
-        }
+        const li = document.createElement("li");
+        li.textContent = `${s.name}: ${s.score}`;
+        scoresList.appendChild(li);
       });
   } catch (err) {
-    console.error("Ошибка загрузки:", err);
+    console.error("Chyba při načítání:", err);
   }
 }
 
 saveScoreBtn.addEventListener("click", async () => {
-  const nickname = nicknameInput.value.trim();
-  if (!nickname) return;
-
   try {
     const res = await fetch(API_URL, {
       headers: { "X-Master-Key": API_KEY }
@@ -105,14 +116,18 @@ saveScoreBtn.addEventListener("click", async () => {
     const data = await res.json();
     let scores = data.record || [];
 
-    // удаляем пустые объекты
     scores = scores.filter(s => s.name);
 
-    // Добавляем нового игрока
-    scores.push({ name: nickname, score });
+    // Если уже есть запись игрока, заменяем её
+    const existing = scores.find(s => s.name === playerName);
+    if (existing) {
+      existing.score = score;
+    } else {
+      scores.push({ name: playerName, score });
+    }
+
     scores.sort((a, b) => b.score - a.score);
 
-    // Сохраняем обратно (топ 50)
     await fetch(API_URL, {
       method: "PUT",
       headers: {
@@ -124,6 +139,6 @@ saveScoreBtn.addEventListener("click", async () => {
 
     loadScores();
   } catch (err) {
-    console.error("Ошибка сохранения:", err);
+    console.error("Chyba při ukládání:", err);
   }
 });
