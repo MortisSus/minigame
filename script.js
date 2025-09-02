@@ -11,10 +11,6 @@ const secretBtn = document.getElementById("secretBtn");
 const saveScoreBtn = document.getElementById("saveScore");
 const scoresList = document.getElementById("scoresList");
 
-const secretModal = document.getElementById("secretModal");
-const secretImg = document.getElementById("secretImg");
-const closeModal = document.getElementById("closeModal");
-
 // ==== JSONBIN CONFIG ====
 const API_KEY = "$2a$10$DtvJ.cRYmWQwaxY7ZPbEl.Itwtyh2fZjipxKjO/oAQRWHhzSuGDYa";
 const BIN_ID = "68b755c9d0ea881f406fbd27";
@@ -77,28 +73,16 @@ setInterval(() => {
   }
 }, 1000);
 
-// ==== Тайная кнопка ====
-const SECRET_URL = "https://i.ibb.co/JFp0CLL1/molodec.png";
-
+// ==== Кнопка "Тайна" ====
 secretBtn.addEventListener("click", () => {
   if (score >= 1000) {
     score -= 1000;
     updateScore();
     saveGame();
-    secretImg.src = SECRET_URL;
-    secretModal.style.display = "block";
+    // Переброс на сайт с картинкой
+    window.open("https://ibb.co/JFp0CLL1", "_blank");
   } else {
     alert("Nemáte dostatek bodů!");
-  }
-});
-
-closeModal.addEventListener("click", () => {
-  secretModal.style.display = "none";
-});
-
-window.addEventListener("click", (e) => {
-  if (e.target == secretModal) {
-    secretModal.style.display = "none";
   }
 });
 
