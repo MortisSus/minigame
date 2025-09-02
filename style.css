@@ -33,3 +33,31 @@ button:hover {
 #leaderboard {
   margin-top: 40px;
 }
+
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal img {
+  display: block;
+  margin: 10% auto;
+  max-width: 80%;
+  border-radius: 10px;
+}
+
+#closeModal {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
